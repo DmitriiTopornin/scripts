@@ -1,4 +1,4 @@
-ARGV.empty? ? file_name = "movies.txt" : file_name = ARGV.first
+file_name = ARGV.first || "movies.txt"
 raise "File \"#{file_name}\" not found" unless File.exist? file_name
 f = File.open(file_name, "r")
 file = f.read
