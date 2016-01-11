@@ -4,10 +4,10 @@ require 'date'
 file_name = ARGV.first || "../movies.txt"
 raise "File \"#{file_name}\" not found" unless File.exist? file_name
 
-movies = CSV.read(file_name, col_sep: "|", headers: ['url', 'title', 'year', 
-																										'country', 'date', 'genre', 
-																										'duration', 'rating', 'director',
-																										 'actors']).map{|movie| OpenStruct.new(movie.to_hash)}
+COLUMNS = ['url', 'title', 'year', 'country', 'date', 'genre', 'duration', 'rating', 'director', 'actors']
+
+movies = CSV.read(file_name, col_sep: "|", headers: COLUMNS).
+	map{|movie| OpenStruct.new(movie.to_hash)}
 
 # 5 самых длинных фильмов					
 puts movies.
