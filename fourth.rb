@@ -1,7 +1,9 @@
 require 'ostruct'
 require 'csv'
 require 'date'
-movies = CSV.read('../movies.txt', { col_sep: "|" } ).map {|movie| OpenStruct.new({url: movie[0], title: movie[1],
+file_name = ARGV.first || "../movies.txt"
+raise "File \"#{file_name}\" not found" unless File.exist? file_name
+movies = CSV.read(file_name, { col_sep: "|" } ).map {|movie| OpenStruct.new({url: movie[0], title: movie[1],
 																																						year: movie[2], country: movie[3],
 																																					  date: movie[4], genre: movie[5], 
 																																					  duration: movie[6], rating: movie[7],
