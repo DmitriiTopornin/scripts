@@ -4,7 +4,7 @@ require 'date'
 file_name = ARGV.first || "../movies.txt"
 raise "File \"#{file_name}\" not found" unless File.exist? file_name
 
-COLUMNS = ['url', 'title', 'year', 'country', 'date', 'genre', 'duration', 'rating', 'director', 'actors']
+COLUMNS = %w[url title year country date genre duration rating director actors]
 
 movies = CSV.read(file_name, col_sep: "|", headers: COLUMNS).
 	map{|movie| OpenStruct.new(movie.to_hash)}
