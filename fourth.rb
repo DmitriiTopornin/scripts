@@ -3,12 +3,13 @@ require 'csv'
 require 'date'
 file_name = ARGV.first || "../movies.txt"
 raise "File \"#{file_name}\" not found" unless File.exist? file_name
-movies = CSV.read(file_name, { col_sep: "|" } ).map {|movie| OpenStruct.new({url: movie[0], title: movie[1],
-																																						year: movie[2], country: movie[3],
-																																					  date: movie[4], genre: movie[5], 
-																																					  duration: movie[6], rating: movie[7],
-																																					  director: movie[8], actors: movie[9]}) }
-# 5 самых длинных фильмов
+
+movies = CSV.read(file_name, col_sep: "|", headers: ['url', 'title', 'year', 
+																										'country', 'date', 'genre', 
+																										'duration', 'rating', 'director',
+																										 'actors']).map{|movie| OpenStruct.new(movie.to_hash)}
+
+# 5 самых длинных фильмов					
 puts movies.
 	sort_by{|movie| movie.duration.split(' ').
 	map(&:to_i)}.reverse[0..5].
@@ -32,10 +33,10 @@ puts movies.
 # Вывести количество фильмов, в котором снялся каждый актёр, использовать метод reduce
 puts movies.
 	map { |movie| movie.actors.split(',') }.
-	flatten.reduce(Hash.new(0)) { |t, x| t[x] += 1; t }.
+	flatten.reduce(Hash.new(0)) { |actors_hash, x| actors_hash[x] += 1; actors_hash }.
 	map{ |actor| "Имя: #{actor[0].strip} Кол-во фильмов:#{actor[1]}"}
 #Вывести статистику по месяцам — в каком сколько фильмов снято (вне зависимости от года)
-puts movies.reject { |movie|  movie.date.split('-')[1].nil? }.
-	map{ |movie| Date.strptime(movie.date, '%Y-%m').mon}.sort.
-	group_by {|month| month}.map { |key, value| "Месяц:#{key} Кол-во фильмов:#{value.count}" }
+puts movies.select { |movie|  movie.date.include? '-' }.
+	map{ |movie| Date.strptime(movie.date,'%Y-%m')}.group_by(&:mon).
+	sort.map { |month, movies| "Месяц:#{Date::MONTHNAMES[month]} Кол-во фильмов:#{movies.count}" }
 	
