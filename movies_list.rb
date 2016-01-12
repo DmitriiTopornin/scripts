@@ -34,4 +34,47 @@ class MoviesList
 			"Заданного поля не существует"
 		end
 	end
+
+	def top_longest_films(count = 5)
+		@movies.
+			sort_by{|movie| movie.duration.split(' ').
+			map(&:to_i)}.reverse[0..count].
+			map {|movie| "Продолжительность: #{movie.duration} Название: #{movie.title}"}
+	end
+
+	def genre_date(ingenre = 'Comedy')
+		@movies.
+			select{|movie| movie.genre.split(',').include? ingenre}.
+			sort_by(&:date).
+			map {|movie| "Дата выхода: #{movie.date} Название: #{movie.title}"}
+	end
+
+	def directors_list
+		@movies.map(&:director).uniq.sort_by{|director| director.split.last}
+	end
+
+	def not_from(country = 'USA')
+		@movies.reject{|movie| movie.country == country}.
+			sort_by(&:country).
+			map{|movie| puts "Страна: #{movie.country} Название: #{movie.title}"}.count
+	end
+
+	def directors_movies_count
+		@movies.
+			group_by(&:director).
+			map {|director, dirmovies| "Кол-во фильмов: #{dirmovies.count} Режиссер: #{director}"}
+	end
+
+	def actors_movies_count 
+		@movies.
+			map { |movie| movie.actors.split(',') }.
+			flatten.reduce(Hash.new(0)) { |actors_hash, x| actors_hash[x] += 1; actors_hash }.
+			map{ |actor| "Имя: #{actor[0].strip} Кол-во фильмов:#{actor[1]}"}
+	end
+
+	def count_by_month
+		@movies.select { |movie|  movie.date.include? '-' }.
+			map{ |movie| Date.strptime(movie.date,'%Y-%m')}.group_by(&:mon).
+			sort.map { |month, movies| "Месяц:#{Date::MONTHNAMES[month]} Кол-во фильмов:#{movies.count}" }
+	end
 end

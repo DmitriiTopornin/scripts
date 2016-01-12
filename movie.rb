@@ -10,7 +10,7 @@ class Movie
 		@genre = movies['genre']
 		@duration = movies['duration']
 		@rating = movies['rating']
-		@director = movies['directors']
+		@director = movies['director']
 		@actors = movies['actors']
 	end
 end
