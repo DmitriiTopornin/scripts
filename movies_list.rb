@@ -3,20 +3,14 @@ require 'ostruct'
 require 'csv'
 require 'date'
 
-COLUMNS = %w[url title year country date genre duration rating director actors]
+COLUMNS = %i[url title year country date genre duration rating director actors]
 
 class MoviesList
 	def initialize(file_name = '../movies.txt')
-		csv_parse(file_name)
+		parse_csv(file_name)
 	end
 
-	def csv_parse(file_name = '../movies.txt')
-		raise "File \"#{file_name}\" not found" unless File.exist? file_name
-		@movies = CSV.read(file_name, col_sep: "|", headers: COLUMNS).
-			map{|movie| Movie.new(movie.to_hash)}
-	end
-
-	def include_genre(ingenre)
+	def by_genre(ingenre)
 		puts "Все фильмы с жанром '#{ingenre}'"
 		@movies.select{|movie| movie.genre.include?(ingenre)}.map {|movie| "Фильм:#{movie.title} | Жанр:#{movie.genre}"}
 	end
@@ -27,18 +21,17 @@ class MoviesList
 	end
 
 	def sort_by(field)
-		if @movies.first.instance_variables.map{|s| s.to_s.delete("@")}.include? field
+		if @movies.first.respond_to? field
 			puts "Сортировка по полю #{field}"
 			@movies.sort_by{|movie| movie.send(field)}.map {|movie| "Поле: #{movie.send(field)} | Фильм: #{movie.title}"}
 		else
-			"Заданного поля не существует"
+			raise "'#{field}' doesn't exist"
 		end
 	end
 
-	def top_longest_films(count = 5)
+	def longest(count = 5)
 		@movies.
-			sort_by{|movie| movie.duration.split(' ').
-			map(&:to_i)}.reverse[0..count].
+			sort_by(&:duration).reverse[0..count].
 			map {|movie| "Продолжительность: #{movie.duration} Название: #{movie.title}"}
 	end
 
@@ -49,7 +42,7 @@ class MoviesList
 			map {|movie| "Дата выхода: #{movie.date} Название: #{movie.title}"}
 	end
 
-	def directors_list
+	def directors
 		@movies.map(&:director).uniq.sort_by{|director| director.split.last}
 	end
 
@@ -73,8 +66,16 @@ class MoviesList
 	end
 
 	def count_by_month
-		@movies.select { |movie|  movie.date.include? '-' }.
-			map{ |movie| Date.strptime(movie.date,'%Y-%m')}.group_by(&:mon).
+		@movies.reject{|movie| movie.date.nil? }.map(&:date).group_by(&:mon).
 			sort.map { |month, movies| "Месяц:#{Date::MONTHNAMES[month]} Кол-во фильмов:#{movies.count}" }
 	end
+
+private
+
+  def parse_csv(file_name = '../movies.txt')
+    raise "File \"#{file_name}\" not found" unless File.exist? file_name
+    @movies = CSV.read(file_name, col_sep: "|", headers: COLUMNS).
+      map{|movie| Movie.new(movie.to_hash)}
+  end
+
 end
