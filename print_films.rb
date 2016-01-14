@@ -1,6 +1,6 @@
 def print_films(data)
   data.each do |value|
-  	puts '_____________________'
+    puts '_____________________'
     puts "Фильм: #{value.title}"
     puts "Жанр: #{value.genre}"
     puts "Страна: #{value.country}"
@@ -14,7 +14,7 @@ def print_films(data)
 end
 
 def print_stats(data)
-	data.each do |value_hash|
+  data.each do |value_hash|
     puts "#{value_hash[0]}  Кол-во:#{value_hash[1]}\n"
   end
 end
