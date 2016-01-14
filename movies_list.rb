@@ -28,7 +28,7 @@ class MoviesList
 
   def longest(count = 5)
     @movies.
-      sort_by(&:duration).reverse[0..count]
+      sort_by(&:duration).reverse.first(count)
   end
 
   def genre_date(ingenre = 'Comedy')
@@ -60,7 +60,7 @@ class MoviesList
   def count_by_month
     @movies.reject{|movie| movie.date.nil? }.map(&:date).group_by(&:mon).
       sort.map { |month, movies| { Date::MONTHNAMES[month] => movies.count } }.
-      reduce Hash.new, :merge
+      reduce(:merge)
   end
 
 private

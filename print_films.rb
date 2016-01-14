@@ -14,7 +14,7 @@ def print_films(data)
 end
 
 def print_stats(data)
-  data.each do |value_hash|
-    puts "#{value_hash[0]}  Кол-во:#{value_hash[1]}\n"
+  data.each do |name, count|
+    puts "#{name}  Кол-во:#{count}\n"
   end
 end
