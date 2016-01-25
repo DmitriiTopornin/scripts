@@ -72,11 +72,7 @@ private
   def parse_csv(file_name = '../../movies.txt')
     raise "File \"#{file_name}\" not found" unless File.exist? file_name
     @movies = CSV.read(file_name, col_sep: "|", headers: COLUMNS).
-    map{|movie| case movie.to_hash[:year].to_i 
-                  when 1900..1945 then AncientMovie.new(movie.to_hash)
-                  when 1946..1968 then ClassicMovie.new(movie.to_hash)
-                  when 1969..2000 then ModernMovie.new(movie.to_hash)
-                  when 2001..Date.today.year then NewMovie.new(movie.to_hash) end }
+    map{|movie| Movie.category(movie.to_hash) }
   end
 
 end
@@ -88,23 +84,20 @@ class MyMoviesList < MoviesList
   end
 
   def rate(movie_title, my_rating)
-    movie = @movies[ @movies.index{ |movie| movie.title == movie_title } ]
-    movie.watch = TRUE
+    movie = @movies.detect{|movie| movie.title = movie_title}
+    movie.watch = true
     movie.my_rating = my_rating
     movie
   end
 
   def random_not_watched(count = 5)
-    @movies.select {|movie| movie.watch == FALSE}
+    @movies.select {|movie| !movie.watch}
       .sort_by {|movie| rand*movie.rating.to_f*movie.preferences.to_f }.last(5)
   end
 
   def random_watched
-    @movies.select {|movie| movie.watch == TRUE}
+    @movies.select(&:watch)
       .sort_by {|movie| rand*movie.rating.to_f*movie.preferences.to_f }.last(5)
   end
 
-  def preferences(categories_array)
-    @movies.each {|movie| if categories_array.include? movie.class.name then movie.preferences = 2 end}
-  end
 end

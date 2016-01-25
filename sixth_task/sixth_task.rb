@@ -19,7 +19,6 @@ movies = MyMoviesList.new
 # print_stats movies.count_by_month
 # puts movies.all.map{|m| m.title}
 movies.rate('Stand by Me', 3.2)
-movies.preferences ['ModernMovie', 'ClassicMovie']
-# print_films movies.random_not_watched
+print_films movies.random_not_watched
 print_films movies.random_watched
 # puts movies.all

@@ -17,29 +17,56 @@ class Movie
     @actors = movie[:actors]
     @watch = FALSE
     @my_rating = nil
-    @preferences = 1
-    case self
-      when AncientMovie
-        @about = "старый фильм (#{@year})"
-      when ClassicMovie
-        @about = "классический фильм, режиссер: #{@director}"
-      when ModernMovie
-        @about = "современный фильм, играют: #{@actors}"
-      when NewMovie
-        @about = "Новинка!" 
-    end
+    description
+  end
+
+  def self.category(movie)
+    case movie[:year].to_i
+      when 1900..1945
+        AncientMovie.new(movie)
+      when 1946..1968
+        ClassicMovie.new(movie)
+      when 1969..2000
+        ModernMovie.new(movie)
+      when 2001..Date.today.year
+        NewMovie.new(movie)
+      end    
   end
 end
 
 
 class AncientMovie < Movie
+  private
+
+  def description
+    @about = "старый фильм (#{@year})"
+    @preferences = 1
+  end
 end
 
 class ClassicMovie < Movie
+  private
+
+  def description
+    @about = "классический фильм, режиссер: #{@director}"
+    @preferences = 2
+  end
 end
 
 class ModernMovie < Movie
+  private
+
+  def description
+    @about = "современный фильм, играют: #{@actors}"
+    @preferences = 3
+  end
 end
 
 class NewMovie < Movie
+  private
+
+  def description
+    @about = "Новинка!"
+    @preferences = 2
+  end
 end
