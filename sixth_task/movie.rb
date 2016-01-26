@@ -2,9 +2,8 @@ class Movie
   attr_accessor :url, :title, :year,
                 :country, :date, :genre, 
                 :duration, :rating, :director,
-                :actors, :watch, :my_rating,
-                :about, :preferences
-  def initialize(movie)
+                :actors, :watch, :my_rating
+  def initialize(movie, movie_list)
     @url = movie[:url]
     @title = movie[:title]
     @year = movie[:year]
@@ -17,56 +16,52 @@ class Movie
     @actors = movie[:actors]
     @watch = FALSE
     @my_rating = nil
-    description
+    @owner = movie_list
   end
 
-  def self.category(movie)
+  def watched?
+    watch
+  end
+
+  def self.category(movie, movie_list)
     case movie[:year].to_i
       when 1900..1945
-        AncientMovie.new(movie)
+        AncientMovie
       when 1946..1968
-        ClassicMovie.new(movie)
+        ClassicMovie
       when 1969..2000
-        ModernMovie.new(movie)
+        ModernMovie
       when 2001..Date.today.year
-        NewMovie.new(movie)
-      end    
+        NewMovie
+    end.new(movie, movie_list)
   end
 end
 
 
 class AncientMovie < Movie
-  private
-
+  PREFERENCES = 1
   def description
     @about = "старый фильм (#{@year})"
-    @preferences = 1
   end
 end
 
 class ClassicMovie < Movie
-  private
-
+  PREFERENCES = 5
   def description
-    @about = "классический фильм, режиссер: #{@director}"
-    @preferences = 2
+    @about = "классический фильм, режиссер: #{@director} - #{@owner.director_movies('director').count}"
   end
 end
 
 class ModernMovie < Movie
-  private
-
+  PREFERENCES = 1
   def description
     @about = "современный фильм, играют: #{@actors}"
-    @preferences = 3
   end
 end
 
 class NewMovie < Movie
-  private
-
+  PREFERENCES = 2
   def description
     @about = "Новинка!"
-    @preferences = 2
   end
 end

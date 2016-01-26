@@ -67,12 +67,16 @@ class MoviesList
       reduce(:merge)
   end
 
-private
+  def director_movies(director)
+    @movies.select{|movie| movie.director == director }
+  end
+
+protected
 
   def parse_csv(file_name = '../../movies.txt')
     raise "File \"#{file_name}\" not found" unless File.exist? file_name
     @movies = CSV.read(file_name, col_sep: "|", headers: COLUMNS).
-    map{|movie| Movie.category(movie.to_hash) }
+    map{|movie| Movie.category(movie.to_hash, self) }
   end
 
 end
@@ -84,20 +88,20 @@ class MyMoviesList < MoviesList
   end
 
   def rate(movie_title, my_rating)
-    movie = @movies.detect{|movie| movie.title = movie_title}
+    movie = @movies.detect{|movie| movie.title == movie_title}
     movie.watch = true
     movie.my_rating = my_rating
     movie
   end
 
   def random_not_watched(count = 5)
-    @movies.select {|movie| !movie.watch}
-      .sort_by {|movie| rand*movie.rating.to_f*movie.preferences.to_f }.last(5)
+    @movies.reject(&:watched?)
+      .sort_by {|movie| rand*movie.rating.to_f*movie.class::PREFERENCES.to_f }.last(5)
   end
 
   def random_watched
-    @movies.select(&:watch)
-      .sort_by {|movie| rand*movie.rating.to_f*movie.preferences.to_f }.last(5)
+    @movies.select(&:watched?)
+      .sort_by {|movie| rand*movie.rating.to_f*movie.class::PREFERENCES.to_f }.last(5)
   end
 
 end
