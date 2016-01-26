@@ -48,7 +48,7 @@ end
 class ClassicMovie < Movie
   PREFERENCES = 5
   def description
-    @about = "классический фильм, режиссер: #{@director} - #{@owner.director_movies('director').count}"
+    @about = "классический фильм, режиссер: #{@director} - #{@owner.director_movies(@director).count}"
   end
 end
 
