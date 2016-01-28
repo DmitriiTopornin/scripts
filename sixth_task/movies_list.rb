@@ -1,4 +1,5 @@
 require_relative 'movie'
+require_relative 'rating'
 require 'ostruct'
 require 'csv'
 require 'date'
@@ -83,15 +84,11 @@ end
 
 
 class MyMoviesList < MoviesList
+
+  include Rating
+
   def initialize(file_name = '../../movies.txt')
     parse_csv(file_name)
-  end
-
-  def rate(movie_title, my_rating)
-    movie = @movies.detect{|movie| movie.title == movie_title}
-    movie.watch = true
-    movie.my_rating = my_rating
-    movie
   end
 
   def random_not_watched(count = 5)
