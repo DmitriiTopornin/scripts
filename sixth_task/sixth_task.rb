@@ -19,7 +19,7 @@ movies = MyMoviesList.new
 # print_stats movies.count_by_month
 # puts movies.all.map{|m| m.title}
 movies.rate('Stand by Me', 3.2)
-print_films movies.random_not_watched
+# print_films movies.random_not_watched
 print_films movies.random_watched
 # puts movies.all
 # movies.all.each {|mv| puts mv.class::PREFERENCES}

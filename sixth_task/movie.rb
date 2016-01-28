@@ -4,8 +4,7 @@ class Movie
                 :country, :date, :genre, 
                 :duration, :rating, :director,
                 :actors
-                # , :watch
-                # , :my_rating
+
   def initialize(movie, movie_list)
     @url = movie[:url]
     @title = movie[:title]
@@ -17,15 +16,10 @@ class Movie
     @rating = movie[:rating]
     @director = movie[:director]
     @actors = movie[:actors]
-    # @watch = FALSE
-    # @my_rating = nil
     @owner = movie_list
   end
-  
+
   include Rating::Item
-  # def watched?
-  #   @watch
-  # end
 
   def self.category(movie, movie_list)
     case movie[:year].to_i
