@@ -17,7 +17,7 @@ class Movie
     @rating = movie[:rating]
     @director = movie[:director]
     @actors = movie[:actors]
-    @watch = FALSE
+    # @watch = FALSE
     # @my_rating = nil
     @owner = movie_list
   end
