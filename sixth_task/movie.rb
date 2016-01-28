@@ -1,8 +1,11 @@
+require_relative 'rating'
 class Movie
   attr_accessor :url, :title, :year,
                 :country, :date, :genre, 
                 :duration, :rating, :director,
-                :actors, :watch, :my_rating
+                :actors
+                # , :watch
+                # , :my_rating
   def initialize(movie, movie_list)
     @url = movie[:url]
     @title = movie[:title]
@@ -15,13 +18,14 @@ class Movie
     @director = movie[:director]
     @actors = movie[:actors]
     @watch = FALSE
-    @my_rating = nil
+    # @my_rating = nil
     @owner = movie_list
   end
-
-  def watched?
-    watch
-  end
+  
+  include Rating::Item
+  # def watched?
+  #   @watch
+  # end
 
   def self.category(movie, movie_list)
     case movie[:year].to_i

@@ -85,7 +85,7 @@ end
 
 class MyMoviesList < MoviesList
 
-  include Rating
+  include Rating::List
 
   def initialize(file_name = '../../movies.txt')
     parse_csv(file_name)
