@@ -77,18 +77,17 @@ class MoviesList
     if block_given?  
       @movies.each {|movie| puts yield(movie)} 
     else 
-      print_films all 
+      all 
     end
   end
 
   def sorted_by(name = nil,&block)
-    print_films @movies.sort_by do |movie| 
-      if block 
-        block.call(movie)
-      elsif name.is_a? Symbol 
-        @sort_algo_hash[name].call(movie) 
-      end
+    if block 
+      sort_block = Proc.new { |movie| block.call(movie) }
+    elsif name.is_a? Symbol 
+      sort_block = Proc.new { |movie| @sort_algo_hash[name].call(movie) }
     end
+    @movies.sort_by {|movie| sort_block.call(movie)}
   end
 
   def add_sort_algo(name, &block)

@@ -24,7 +24,7 @@ movies = MyMoviesList.new
 # puts movies.all
 # movies.all.each {|mv| puts mv.class::PREFERENCES}
 # movies.print {|movie| "#{movie.title}"}
-movies.sorted_by {|movie| [movie.genre, movie.year]}
+print_films movies.sorted_by {|movie| [movie.genre, movie.year]}
 movies.add_sort_algo(:test) {|movie| [movie.genre]}
-movies.sorted_by(:test)
+print_films movies.sorted_by(:test)
 # movies.sort_by(:hui)
