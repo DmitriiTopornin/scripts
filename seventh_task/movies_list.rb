@@ -95,6 +95,15 @@ class MoviesList
     @sort_algo_hash[name] = block
   end
 
+  def add_filter(name, &block)
+    @filter ||= {}
+    @filter[name] = block
+  end
+
+  def filter(filters)
+    filters.reduce(@movies) {|movies, filter| movies.select{|movie| @filter[filter[0]].call(movie, filter[1])}}
+  end
+
 protected
 
   def parse_csv(file_name = '../../movies.txt')
