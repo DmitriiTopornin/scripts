@@ -26,11 +26,11 @@ movies = MyMoviesList.new
 # movies.print {|movie| "#{movie.title}"}
 # print_films movies.sorted_by {|movie| [movie.genre, movie.year]}
 movies.add_sort_algo(:test) {|movie| [movie.genre, movie.year]}
-print_films movies.sorted_by(:tesst)
-# movies.add_filter(:genres){|movie, *genres| genres.include?(movie.genre)}
-# movies.add_filter(:years){|movie, from, to| (from..to).include?(movie.year.to_i)}
+print_films movies.sorted_by(:test)
+movies.add_filter(:genres){|movie, *genres| genres.include?(movie.genre)}
+movies.add_filter(:years){|movie, from, to| (from..to).include?(movie.year.to_i)}
 
-# print_films movies.filter(
-#     genres: ['Comedy'],
-#     years: [1890, 2010]
-#   )
+print_films movies.filter(
+    genres: ['Comedy'],
+    years: [1890, 2010]
+  )
