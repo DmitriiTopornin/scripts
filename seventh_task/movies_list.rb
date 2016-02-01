@@ -83,11 +83,12 @@ class MoviesList
 
   def sorted_by(name = nil,&block)
     if block 
-      sort_block = Proc.new { |movie| block.call(movie) }
-    elsif name.is_a? Symbol 
-      sort_block = Proc.new { |movie| @sort_algo_hash[name].call(movie) }
+      @movies.sort_by {|movie| sort_block.call(movie)}
+    elsif name.is_a?(Symbol) && @sort_algo_hash.has_key?(name)
+      @movies.sort_by {|movie| @sort_algo_hash[name].call(movie)}
+    else
+      all
     end
-    @movies.sort_by {|movie| sort_block.call(movie)}
   end
 
   def add_sort_algo(name, &block)
@@ -101,7 +102,7 @@ class MoviesList
   end
 
   def filter(filters)
-    filters.reduce(@movies) {|movies, filter| movies.select{|movie| @filter[filter[0]].call(movie, filter[1])}}
+    filters.reduce(@movies) {|movies, (filter_name, val)| movies.select{|movie| @filter[filter_name].call(movie, *val)}}
   end
 
 protected
