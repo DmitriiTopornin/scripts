@@ -87,9 +87,9 @@ class MoviesList
     elsif name.is_a?(Symbol) && @sort_algo_hash.has_key?(name)
       @sort_algo_hash[name]
     else
-      raise "Unknown name: #{name.to_s}"
+      raise "Unknown name: #{name.inspect}"
     end
-    @movies.sort_by {|movie| sort_block.call(movie)}
+    @movies.sort_by(&sort_block)
   end
 
   def add_sort_algo(name, &block)
