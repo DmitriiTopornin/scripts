@@ -6,7 +6,7 @@ movies = MyMoviesList.new
 
 
 
-# print_films movies.by_genre('Crime')
+print_films movies.by_genre('Crime')
 # print_films movies.by_genre('Crime')
 # print_films movies.exclude_genre('Crime')
 # print_films movies.sort_by('title')
@@ -25,8 +25,8 @@ movies = MyMoviesList.new
 # movies.all.each {|mv| puts mv.class::PREFERENCES}
 # movies.print {|movie| "#{movie.title}"}
 # print_films movies.sorted_by {|movie| [movie.genre, movie.year]}
-movies.add_sort_algo(:test) {|movie| [movie.genre, movie.year]}
-print_films movies.sorted_by(:test)
+# movies.add_sort_algo(:test) {|movie| [movie.genre, movie.year]}
+# print_films movies.sorted_by(:test)
 # movies.add_filter(:genres){|movie, *genres| genres.include?(movie.genre)}
 # movies.add_filter(:years){|movie, from, to| (from..to).include?(movie.year.to_i)}
 

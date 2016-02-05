@@ -17,26 +17,28 @@ class Movie
     @director = movie[:director]
     @actors = movie[:actors]
     @owner = movie_list
-    @filter ||= {}
   end
 
   include Rating::Item
 
   def self.category(movie, movie_list)
-    @filter.each do |movie_class, block|
-      movie_class.send(new) if block.call  
-    end
+    filters.map do |movie_class, block|
+      movie_class.new(movie, movie_list) if block.call(movie[:year].to_i)   
+    end.compact!.first
   end
 
+  def self.filters
+    @filters ||= {}
+  end 
+
   def self.filter(&block)
-    @filter ||= {}
-    @filter[self] = block
+    Movie.filters[self] = block
   end
 end
 
 
 class AncientMovie < Movie
-  filter { (1900..1945).cover?(year) }
+  filter { |year| (1900..1945).cover?(year) }
   PREFERENCES = 1
   def description
     @about = "старый фильм (#{@year})"
@@ -44,7 +46,7 @@ class AncientMovie < Movie
 end
 
 class ClassicMovie < Movie
-  filter { (1946..1968).cover?(year) }
+  filter { |year| (1946..1968).cover?(year) }
   PREFERENCES = 5
   def description
     @about = "классический фильм, режиссер: #{@director} - #{@owner.director_movies(@director).count}"
@@ -52,7 +54,7 @@ class ClassicMovie < Movie
 end
 
 class ModernMovie < Movie
-  filter { (1968..2000).cover?(year) }
+  filter { |year| (1968..2000).cover?(year) }
   PREFERENCES = 1
   def description
     @about = "современный фильм, играют: #{@actors}"
@@ -60,7 +62,7 @@ class ModernMovie < Movie
 end
 
 class NewMovie < Movie
-  filter { (2001..Date.today.year).cover?(year) }
+  filter { |year| (2001..Date.today.year).cover?(year) }
   PREFERENCES = 2
   def description
     @about = "Новинка!"
