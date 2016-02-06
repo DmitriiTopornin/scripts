@@ -22,9 +22,7 @@ class Movie
   include Rating::Item
 
   def self.category(movie, movie_list)
-    filters.map do |movie_class, block|
-      movie_class.new(movie, movie_list) if block.call(movie[:year].to_i)   
-    end.compact!.first
+    filters.detect{|movie_class, block| block.call(movie[:year].to_i)}.first.new(movie, movie_list)
   end
 
   def self.filters
@@ -34,37 +32,74 @@ class Movie
   def self.filter(&block)
     Movie.filters[self] = block
   end
+
+  def self.movie_params
+    @movie_params ||= {} 
+  end
+
+  def self.print_format(print_format)
+    @print_format = sprintf print_format
+  end
+
+  def self.weight(weight)
+    @weight = weight
+  end
+
 end
 
 
 class AncientMovie < Movie
   filter { |year| (1900..1945).cover?(year) }
-  PREFERENCES = 1
+  # print_format "старый фильм (#{@year})"
   def description
-    @about = "старый фильм (#{@year})"
+    print_format "старый фильм %{year}" % {year: @year}
+  end
+
+  def preferences
+    weight 3
   end
 end
 
 class ClassicMovie < Movie
   filter { |year| (1946..1968).cover?(year) }
-  PREFERENCES = 5
+  # PREFERENCES = 5
   def description
-    @about = "классический фильм, режиссер: #{@director} - #{@owner.director_movies(@director).count}"
+    print_format "классический фильм, режиссер  %{director} - %{director_movies_count}"  % {director: @director, director_movies_count: 3}
+  end
+  # #{@owner.director_movies(@director).count}
+  def preferences
+    weight 5
   end
 end
 
 class ModernMovie < Movie
   filter { |year| (1968..2000).cover?(year) }
-  PREFERENCES = 1
+  # PREFERENCES = 1
+  # def description
+  #   @about = "современный фильм, играют: #{@actors}"
+  # end
   def description
-    @about = "современный фильм, играют: #{@actors}"
+    print_format "современный фильм, играют: %{actors}" % {actors: @actors}
+  end
+
+  def preferences
+    weight 1
   end
 end
 
 class NewMovie < Movie
+
+
   filter { |year| (2001..Date.today.year).cover?(year) }
-  PREFERENCES = 2
+  # PREFERENCES = 2
+  # def description
+  #   @about = "Новинка!"
+  # end
   def description
-    @about = "Новинка!"
+    print_format "Новинка!"
+  end
+
+  def preferences
+    weight 2
   end
 end

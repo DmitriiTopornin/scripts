@@ -5,8 +5,8 @@ require_relative 'print_films'
 movies = MyMoviesList.new
 
 
-
-print_films movies.by_genre('Crime')
+movies.random_not_watched
+# print_films movies.by_genre('Crime')
 # print_films movies.by_genre('Crime')
 # print_films movies.exclude_genre('Crime')
 # print_films movies.sort_by('title')

@@ -125,14 +125,14 @@ class MyMoviesList < MoviesList
     parse_csv(file_name)
   end
 
-  def random_not_watched(count = 5)
+  def random_not_watched
     @movies.reject(&:watched?)
-      .sort_by {|movie| rand*movie.rating.to_f*movie.class::PREFERENCES.to_f }.last(5)
+      .sort_by {|movie| rand*movie.rating.to_f*movie.class.preferences.to_f }.last(5)
   end
 
   def random_watched
     @movies.select(&:watched?)
-      .sort_by {|movie| rand*movie.rating.to_f*movie.class::PREFERENCES.to_f }.last(5)
+      .sort_by {|movie| rand*movie.rating.to_f*movie.class.preferences.to_f }.last(5)
   end
 
 end
