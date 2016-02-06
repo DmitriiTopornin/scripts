@@ -126,14 +126,13 @@ class MyMoviesList < MoviesList
   end
 
   def random_not_watched
-    # puts @movies.select {|m| m.class.to_s == 'Movie'}
     @movies.reject(&:watched?)
-      .sort_by {|movie| puts rand*movie.rating.to_f*movie.preferences.to_f; rand*movie.rating.to_f*movie.preferences.to_f }.last(5)
+      .sort_by {|movie| rand*movie.rating.to_f*movie.class.get_weight.to_f }.last(5)
   end
 
   def random_watched
     @movies.select(&:watched?)
-      .sort_by {|movie| rand*movie.rating.to_f*movie.preferences.to_f }.last(5)
+      .sort_by {|movie| rand*movie.rating.to_f*movie.class.get_weight.to_f }.last(5)
   end
 
 end

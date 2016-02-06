@@ -37,12 +37,20 @@ class Movie
     @movie_params ||= {} 
   end
 
-  def print_format(print_format)
-    @print_format = sprintf print_format
+  def self.print_format(print_format)
+    @print_format = print_format
   end
 
-  def weight(weight)
+  def self.get_print_format
+    @print_format
+  end
+
+  def self.weight(weight)
     @weight = weight
+  end
+
+  def self.get_weight
+    @weight
   end
 
 end
@@ -50,50 +58,36 @@ end
 
 class AncientMovie < Movie
   filter { |year| (1900..1945).cover?(year) }
-  
+  print_format "старый фильм %{year}"
+  weight 0.6
   def description
-    print_format "старый фильм %{year}" % {year: @year}
-  end
-
-  def preferences
-    weight 0.7
+    self.class.get_print_format % {year: @year}
   end
 end
 
 class ClassicMovie < Movie
   filter { |year| (1946..1968).cover?(year) }
-
+  print_format "классический фильм, режиссер  %{director}, кол-во фильмов: %{director_movies_count}"
+  weight 0.6
   def description
-    print_format "классический фильм, режиссер  %{director} - %{director_movies_count}"  % {director: @director, director_movies_count: @owner.director_movies(@director).count}
-  end
-
-  def preferences
-    weight 0.6
+    self.class.get_print_format % {director: @director, director_movies_count: @owner.director_movies(@director).count}
   end
 end
 
 class ModernMovie < Movie
   filter { |year| (1968..2000).cover?(year) }
-  
+  print_format "современный фильм, играют: %{actors}"
+  weight 0.6
   def description
-    print_format "современный фильм, играют: %{actors}" % {actors: @actors}
-  end
-
-  def preferences
-    weight 0.6
+   self.class.get_print_format % {actors: @actors}
   end
 end
 
 class NewMovie < Movie
-
-
   filter { |year| (2001..Date.today.year).cover?(year) }
-  
+  print_format "Новинка!"
+  weight 0.6
   def description
-    print_format "Новинка!"
-  end
-
-  def preferences
-    weight 0.6
+    self.class.get_print_format
   end
 end
