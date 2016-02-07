@@ -53,6 +53,10 @@ class Movie
     @weight
   end
 
+  def description
+    self.class.get_print_format % {year: @year, director: @director, director_movies_count: @owner.director_movies(@director).count, actors: @actors}
+  end
+
 end
 
 
@@ -60,34 +64,22 @@ class AncientMovie < Movie
   filter { |year| (1900..1945).cover?(year) }
   print_format "старый фильм %{year}"
   weight 0.6
-  def description
-    self.class.get_print_format % {year: @year}
-  end
 end
 
 class ClassicMovie < Movie
   filter { |year| (1946..1968).cover?(year) }
   print_format "классический фильм, режиссер  %{director}, кол-во фильмов: %{director_movies_count}"
   weight 0.6
-  def description
-    self.class.get_print_format % {director: @director, director_movies_count: @owner.director_movies(@director).count}
-  end
 end
 
 class ModernMovie < Movie
   filter { |year| (1968..2000).cover?(year) }
   print_format "современный фильм, играют: %{actors}"
   weight 0.6
-  def description
-   self.class.get_print_format % {actors: @actors}
-  end
 end
 
 class NewMovie < Movie
   filter { |year| (2001..Date.today.year).cover?(year) }
   print_format "Новинка!"
   weight 0.6
-  def description
-    self.class.get_print_format
-  end
 end
