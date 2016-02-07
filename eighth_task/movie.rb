@@ -58,6 +58,7 @@ class Movie
   end
 
   protected
+
   def to_h
     {
      year: @year,
@@ -65,6 +66,15 @@ class Movie
      director_movies_count: @owner.director_movies(@director).count,
      actors: @actors
     }
+  end
+
+  def method_missing(method_sym, *arguments, &block)
+    genre_var = method_sym.to_s.chomp('?').capitalize
+    if @owner.genre_list.include? genre_var
+      @genre.split(",").include? genre_var
+    else
+      super
+    end
   end
 
 end

@@ -113,7 +113,7 @@ protected
     @movies = CSV.read(file_name, col_sep: "|", headers: COLUMNS).
     map{|movie| Movie.category(movie.to_hash, self) }
   end
-
+  
 end
 
 
@@ -135,4 +135,7 @@ class MyMoviesList < MoviesList
       .sort_by {|movie| rand*movie.rating.to_f*movie.class.get_weight.to_f }.last(5)
   end
 
+  def genre_list
+    @movies.map {|movie| movie.genre.split(",")}.flatten.uniq!
+  end
 end
