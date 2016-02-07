@@ -54,7 +54,17 @@ class Movie
   end
 
   def description
-    self.class.get_print_format % {year: @year, director: @director, director_movies_count: @owner.director_movies(@director).count, actors: @actors}
+    self.class.get_print_format % self.to_h
+  end
+
+  protected
+  def to_h
+    {
+     year: @year,
+     director: @director,
+     director_movies_count: @owner.director_movies(@director).count,
+     actors: @actors
+    }
   end
 
 end
