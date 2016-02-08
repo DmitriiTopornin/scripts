@@ -11,7 +11,7 @@ class Movie
     @year = movie[:year]
     @country = movie[:country]
     @date = Date.strptime(movie[:date],'%Y-%m') if movie[:date].include? '-'
-    @genre = movie[:genre]
+    @genre = movie[:genre].split(',')
     @duration = movie[:duration].split(' ').first.to_i
     @rating = movie[:rating]
     @director = movie[:director]
@@ -69,9 +69,9 @@ class Movie
   end
 
   def method_missing(method_sym, *arguments, &block)
-    genre_var = method_sym.to_s.chomp('?').capitalize
-    if @owner.genre_list.include? genre_var
-      @genre.split(",").include? genre_var
+    genre_var = method_sym.to_s.capitalize
+    if genre_var.include?('?') && @owner.genre_list.include?(genre_var.chomp('?'))
+      @genre.include? genre_var
     else
       super
     end

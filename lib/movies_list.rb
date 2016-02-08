@@ -7,9 +7,9 @@ require 'date'
 COLUMNS = %i[url title year country date genre duration rating director actors]
 
 class MoviesList
-  def initialize(file_name = '../../movies.txt')
+  def initialize
     $call_sort_block = nil
-    parse_csv(file_name)
+    parse_csv
   end
 
   def all
@@ -39,7 +39,7 @@ class MoviesList
 
   def genre_date(ingenre = 'Comedy')
     @movies.
-      select{|movie| movie.genre.split(',').include? ingenre}.
+      select{|movie| movie.genre.include? ingenre}.
       sort_by(&:date)
   end
 
@@ -108,7 +108,7 @@ class MoviesList
 
 protected
 
-  def parse_csv(file_name = '../../movies.txt')
+  def parse_csv(file_name = '../movies.txt')
     raise "File \"#{file_name}\" not found" unless File.exist? file_name
     @movies = CSV.read(file_name, col_sep: "|", headers: COLUMNS).
     map{|movie| Movie.category(movie.to_hash, self) }
@@ -121,10 +121,6 @@ class MyMoviesList < MoviesList
 
   include Rating::List
 
-  def initialize(file_name = '../../movies.txt')
-    parse_csv(file_name)
-  end
-
   def random_not_watched
     @movies.reject(&:watched?)
       .sort_by {|movie| rand*movie.rating.to_f*movie.class.get_weight.to_f }.last(5)
@@ -136,6 +132,6 @@ class MyMoviesList < MoviesList
   end
 
   def genre_list
-    @movies.map {|movie| movie.genre.split(",")}.flatten.uniq!
+    @genre ||= @movies.map {|movie| movie.genre }.flatten.uniq!
   end
 end
