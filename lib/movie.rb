@@ -69,6 +69,7 @@ class Movie
   end
 
   def method_missing(method_sym, *arguments, &block)
+    raise ArgumentError, 'Wrong number of arguments' unless arguments.count == 0
     genre_var = method_sym.to_s.capitalize
     if genre_var.include?('?') && @owner.genre_list.include?(genre_var.chomp('?'))
       @genre.include? genre_var

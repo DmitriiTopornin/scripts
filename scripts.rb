@@ -5,8 +5,7 @@ require_relative 'lib/print_films'
 movies = MyMoviesList.new
 
 
-print_films movies.random_not_watched.reject(&:comedy?)
-print_films movies.not_from('USA').reject(&:comedy?)
+print_films movies.all.reject(&:comedy?)
 print_films movies.by_genre('Crime')
 print_films movies.exclude_genre('Crime')
 print_films movies.sort_by('title')
