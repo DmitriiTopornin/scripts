@@ -1,4 +1,5 @@
 require_relative 'movie'
+require_relative 'rating'
 require 'ostruct'
 require 'csv'
 require 'date'
@@ -6,8 +7,13 @@ require 'date'
 COLUMNS = %i[url title year country date genre duration rating director actors]
 
 class MoviesList
-  def initialize(file_name = '../movies.txt')
-    parse_csv(file_name)
+  def initialize
+    $call_sort_block = nil
+    parse_csv
+  end
+
+  def all
+    @movies.map{|movie| movie}
   end
 
   def by_genre(ingenre)
@@ -33,7 +39,7 @@ class MoviesList
 
   def genre_date(ingenre = 'Comedy')
     @movies.
-      select{|movie| movie.genre.split(',').include? ingenre}.
+      select{|movie| movie.genre.include? ingenre}.
       sort_by(&:date)
   end
 
@@ -63,12 +69,69 @@ class MoviesList
       reduce(:merge)
   end
 
-private
+  def director_movies(director)
+    @movies.select{|movie| movie.director == director }
+  end
+
+  def print
+    if block_given?  
+      @movies.each {|movie| puts yield(movie)} 
+    else 
+      all 
+    end
+  end
+
+  def sorted_by(name = nil,&block)
+    sort_block = if block 
+      block
+    elsif name.is_a?(Symbol) && @sort_algo_hash.has_key?(name)
+      @sort_algo_hash[name]
+    else
+      raise "Unknown name: #{name.inspect}"
+    end
+    @movies.sort_by(&sort_block)
+  end
+
+  def add_sort_algo(name, &block)
+    @sort_algo_hash ||= {}
+    @sort_algo_hash[name] = block
+  end
+
+  def add_filter(name, &block)
+    @filter ||= {}
+    @filter[name] = block
+  end
+
+  def filter(filters)
+    filters.reduce(@movies) {|movies, (filter_name, val)| movies.select{|movie| @filter[filter_name].call(movie, *val)}}
+  end
+
+protected
 
   def parse_csv(file_name = '../movies.txt')
     raise "File \"#{file_name}\" not found" unless File.exist? file_name
     @movies = CSV.read(file_name, col_sep: "|", headers: COLUMNS).
-    map{|movie| Movie.new(movie.to_hash)}
+    map{|movie| Movie.category(movie.to_hash, self) }
+  end
+  
+end
+
+
+class MyMoviesList < MoviesList
+
+  include Rating::List
+
+  def random_not_watched
+    @movies.reject(&:watched?)
+      .sort_by {|movie| rand*movie.rating.to_f*movie.class.get_weight.to_f }.last(5)
   end
 
+  def random_watched
+    @movies.select(&:watched?)
+      .sort_by {|movie| rand*movie.rating.to_f*movie.class.get_weight.to_f }.last(5)
+  end
+
+  def genre_list
+    @genre ||= @movies.map {|movie| movie.genre }.flatten.uniq!
+  end
 end
