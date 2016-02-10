@@ -3,13 +3,16 @@ require_relative 'rating'
 require 'ostruct'
 require 'csv'
 require 'date'
+require 'open-uri'
+require 'nokogiri'
 
 COLUMNS = %i[url title year country date genre duration rating director actors]
 
 class MoviesList
   def initialize
     $call_sort_block = nil
-    parse_csv
+    # parse_csv
+    parse_site
   end
 
   def all
@@ -111,7 +114,31 @@ protected
   def parse_csv(file_name = '../movies.txt')
     raise "File \"#{file_name}\" not found" unless File.exist? file_name
     @movies = CSV.read(file_name, col_sep: "|", headers: COLUMNS).
-    map{|movie| Movie.category(movie.to_hash, self) }
+      map{|movie| Movie.category(movie.to_hash, self) }
+    # puts @movies
+  end
+
+  def parse_site(url="http://www.imdb.com/chart/top")
+    doc = Nokogiri::HTML(open(url))
+    # puts doc.css("table tbody tr td.titleColumn a").
+    #   map do |movie| 
+    #     Nokogiri::HTML(open(url[0..18]+movie["href"])).css("div.ratingValue span")}
+    #   end
+    # @movies = Hash.new
+    mov = Hash.new
+    mov [:url] = doc.css("table tbody tr td.titleColumn a").map{|movie| url[0..18]+movie["href"]}
+    firstmov = Nokogiri::HTML(open(mov[:url].first))
+    # film = open(url.first)
+    puts mov[:rating] = firstmov.css("div.ratingValue span").first.content.to_s
+    puts mov[:title] = firstmov.css("div.title_wrapper h1").first.content.to_s
+    puts mov[:year] = mov[:title].split[2][10..13]
+    #как это переделать чтобы работало адекватно - не знаю, сейчас просто заглушка которая возвращает строк
+    puts mov[:duration] = firstmov.css("div.subtext time").first.content.to_s.strip.split.map {|s| s.tr('h min', '')}.reduce(&:+)
+    puts mov[:genre] = firstmov.css("a span.itemprop")[0].content + "," + firstmov.css("a span.itemprop")[1].content
+    puts mov[:country] = firstmov.css("div.subtext a")[2].content.split.last.tr("()","")
+    puts mov[:date] = Date.parse(firstmov.css("div.subtext a")[2].content.split.reverse.drop(1).reverse.join)
+    puts mov[:director] = firstmov.css("div.credit_summary_item a span.itemprop")[0].content
+    puts mov[:actors] = firstmov.css("div.credit_summary_item a span.itemprop")[3].content
   end
   
 end
