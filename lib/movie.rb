@@ -10,7 +10,11 @@ class Movie
     @title = movie[:title]
     @year = movie[:year]
     @country = movie[:country]
-    @date = Date.strptime(movie[:date],'%Y-%m') if movie[:date].include? '-'
+    if movie[:date].include? '-'
+      @date = Date.strptime(movie[:date],'%Y-%m')
+    else
+      @date = Date.strptime(movie[:date],'%Y')
+    end
     @genre = movie[:genre].split(',')
     @duration = movie[:duration].split(' ').first.to_i
     @rating = movie[:rating]
