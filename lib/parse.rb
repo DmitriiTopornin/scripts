@@ -3,6 +3,8 @@ require 'progress_bar'
 
 class ImdbParser
 
+  IMDB_URL="http://www.imdb.com/chart/top"
+
   def self.parse_top(file_name)
     @movies = []
     get_list
@@ -17,7 +19,8 @@ class ImdbParser
     end
   end
 
-  def self.parse_movie(movie_url, current_movie)
+  def self.get_movie(movie_url)
+    doc = Nokogiri::HTML(open(movie_url))
     mov = {}
     mov[:url] = movie_url
     current_movie = Nokogiri::HTML(open(movie_url))
@@ -37,17 +40,11 @@ class ImdbParser
     mov
   end
 
-
-  def self.get_movie(movie_url)
-    doc = Nokogiri::HTML(open(movie_url))
-    parse_movie(movie_url, doc)
-  end
-
   def self.get_list
-    url="http://www.imdb.com/chart/top"
-    doc = Nokogiri::HTML(open(url))
-    bar = ProgressBar.new(doc.css("table tbody tr td.titleColumn a").map{|movie| url[0..18]+movie["href"]}.count)
-    doc.css("table tbody tr td.titleColumn a").map{|movie| url[0..18]+movie["href"]}.each do |movie_url|
+    doc = Nokogiri::HTML(open(IMDB_URL))
+    movies_url_list = doc.css("table tbody tr td.titleColumn a").map{|movie| IMDB_URL[0..18]+movie["href"]}
+    bar = ProgressBar.new(movies_url_list.count)
+    movies_url_list.each do |movie_url|
       @movies << get_movie(movie_url)
       bar.increment!
     end
