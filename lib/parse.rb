@@ -1,19 +1,11 @@
 require 'json'
-require 'eventmachine'
-require 'em-http-request'
+require 'progress_bar'
 
 class ImdbParser
 
   def self.parse_top(file_name)
-    url="http://www.imdb.com/chart/top"
-    starttime = Time.now
     @movies = []
-    @fail_urls = []
-    assync_request(url)
-    @fail_urls.each {|movie_url| @movies << parse_movie(movie_url, Nokogiri::HTML(open(movie_url)))}
-    puts "----"
-    puts Time.now - starttime
-    puts "----"
+    get_list
     create_json(file_name)
   end
 
@@ -25,9 +17,10 @@ class ImdbParser
     end
   end
 
-  def self.parse_movie(movie, current_movie)
+  def self.parse_movie(movie_url, current_movie)
     mov = {}
-    mov[:url] = movie
+    mov[:url] = movie_url
+    current_movie = Nokogiri::HTML(open(movie_url))
     mov[:rating] = current_movie.at("div.ratingValue span[itemprop='ratingValue']").content
     mov[:title] = current_movie.at("div.title_wrapper h1[itemprop='name']").content.strip
     mov[:year] = current_movie.at("div.title_wrapper h1[itemprop='name'] span").content.tr("()","")
@@ -44,26 +37,19 @@ class ImdbParser
     mov
   end
 
-  def self.assync_request(url)
+
+  def self.get_movie(movie_url)
+    doc = Nokogiri::HTML(open(movie_url))
+    parse_movie(movie_url, doc)
+  end
+
+  def self.get_list
+    url="http://www.imdb.com/chart/top"
     doc = Nokogiri::HTML(open(url))
-    counter = 0
-    fail_counter = 0
-    EventMachine.run do
-    doc.css("table tbody tr td.titleColumn a").map{|movie| url[0..18]+movie["href"]}.each_with_index do |movie, index|
-      http = EventMachine::HttpRequest.new(movie).get timeout: 15
-      http.errback do
-        puts "FAIL! #{index}"; fail_counter += 1; counter += 1
-        @fail_urls << movie
-        EventMachine.stop if counter == 250
-      end
-      http.callback do 
-        puts "OK! #{index}" 
-        counter += 1 
-        puts counter
-        @movies << parse_movie(movie, Nokogiri::HTML(http.response))
-        EventMachine.stop if counter == 250
-      end
-    end
+    bar = ProgressBar.new(doc.css("table tbody tr td.titleColumn a").map{|movie| url[0..18]+movie["href"]}.count)
+    doc.css("table tbody tr td.titleColumn a").map{|movie| url[0..18]+movie["href"]}.each do |movie_url|
+      @movies << get_movie(movie_url)
+      bar.increment!
     end
   end
 end
