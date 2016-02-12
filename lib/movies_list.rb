@@ -9,13 +9,16 @@ require 'nokogiri'
 COLUMNS = %i[url title year country date genre duration rating director actors]
 
 class MoviesList
-  def initialize(key = :csv, file_name = '../movies.txt')
-    $call_sort_block = nil
-    if key == :csv
-      parse_csv(file_name)
-    elsif key == :json
-      parse_json(file_name)
-    end
+  def initialize(method, file_name)
+    eval(method)
+  end
+
+  def self.from_csv(file_name = '../movies.txt')
+    self.new("parse_csv(file_name)", file_name)
+  end
+
+  def self.from_json(file_name = 'temp.json')
+    self.new("parse_json(file_name)", file_name)
   end
 
   def all
@@ -116,6 +119,7 @@ protected
 
   def parse_csv(file_name)
     raise "File \"#{file_name}\" not found" unless File.exist? file_name
+
     @movies = CSV.read(file_name, col_sep: "|", headers: COLUMNS).
       map{|movie| Movie.category(movie.to_hash, self) }
   end

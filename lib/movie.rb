@@ -15,7 +15,7 @@ class Movie
     else
       @date = Date.strptime(movie[:date],'%Y')
     end
-    @genre = movie[:genre].split(',')
+    @genre = movie[:genre]
     @duration = movie[:duration].split(' ').first.to_i
     @rating = movie[:rating]
     @director = movie[:director]

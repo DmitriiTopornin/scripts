@@ -1,7 +1,7 @@
 def print_films(data)
   data.each do |value|
     puts '_____________________'
-    puts "Фильм: #{value.title} - #{value.class}"
+    puts "Фильм: #{value.title} - #{value.description}"
     puts "Жанр: #{value.genre.join(', ')}"
     puts "Страна: #{value.country}"
     puts "Рейтинг: #{value.rating}"

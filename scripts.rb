@@ -5,12 +5,10 @@ require_relative 'lib/parse'
 
 
 
+ImdbParser.parse_top("temp")
+movies = MyMoviesList.from_json
 
-movies_parse = Parse.new
-movies_parse.create_json("temp")
-
-movies = MyMoviesList.new(:json, "temp.json")
-
+print_films movies.all
 print_films movies.all.reject(&:drama?)
 print_films movies.by_genre('Crime')
 print_films movies.exclude_genre('Crime')
