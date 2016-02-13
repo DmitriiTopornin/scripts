@@ -64,6 +64,7 @@ class Movie
   protected
 
   def to_h
+    # puts @owner.class
     {
      year: @year,
      director: @director,

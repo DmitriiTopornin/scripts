@@ -10,7 +10,7 @@ COLUMNS = %i[url title year country date genre duration rating director actors]
 
 class MoviesList
   def initialize(movies_array)
-    @movies = movies_array
+    @movies = movies_array.map {|movie_hash| Movie.category(movie_hash, self) }
   end
 
   def self.from_csv(file_name = '../movies.txt')
@@ -121,14 +121,14 @@ protected
     raise "File \"#{file_name}\" not found" unless File.exist? file_name
 
     CSV.read(file_name, col_sep: "|", headers: COLUMNS).
-      map{|movie| Movie.category(movie.to_hash, self) }
+      map{|movie| movie.to_hash }
   end
 
   def self.parse_json(file_name)
     raise "File \"#{file_name}\" not found" unless File.exist? file_name
 
     JSON.parse(File.open(file_name, "r").read).
-      map {|movie_hash| Movie.category(movie_hash.inject({}) {|memory,(key,value)| memory[key.to_sym] = value; memory}, self)}
+      map {|movie_hash| movie_hash.inject({}) {|memory,(key,value)| memory[key.to_sym] = value; memory} }
   end
   
 end
