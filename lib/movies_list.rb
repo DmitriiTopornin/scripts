@@ -128,7 +128,7 @@ protected
     raise "File \"#{file_name}\" not found" unless File.exist? file_name
 
     JSON.parse(File.open(file_name, "r").read).
-      map {|movie_hash| movie_hash.inject({}) {|memory,(key,value)| memory[key.to_sym] = value; memory} }
+      map {|movie_hash| movie_hash.symbolize_keys }
   end
   
 end
@@ -150,5 +150,12 @@ class MyMoviesList < MoviesList
 
   def genre_list
     @genre ||= @movies.map {|movie| movie.genre }.flatten.uniq!
+  end
+end
+
+
+class Hash
+  def symbolize_keys
+    map{|k,v| [k.to_sym, v]}.to_h
   end
 end
