@@ -3,13 +3,22 @@ require_relative 'rating'
 require 'ostruct'
 require 'csv'
 require 'date'
+require 'open-uri'
+require 'nokogiri'
 
 COLUMNS = %i[url title year country date genre duration rating director actors]
 
 class MoviesList
-  def initialize
-    $call_sort_block = nil
-    parse_csv
+  def initialize(movies_array)
+    @movies = movies_array.map {|movie_hash| Movie.category(movie_hash, self) }
+  end
+
+  def self.from_csv(file_name = '../movies.txt')
+    new(parse_csv(file_name))
+  end
+
+  def self.from_json(file_name = 'temp.json')
+    new(parse_json(file_name))
   end
 
   def all
@@ -108,10 +117,18 @@ class MoviesList
 
 protected
 
-  def parse_csv(file_name = '../movies.txt')
+  def self.parse_csv(file_name)
     raise "File \"#{file_name}\" not found" unless File.exist? file_name
-    @movies = CSV.read(file_name, col_sep: "|", headers: COLUMNS).
-    map{|movie| Movie.category(movie.to_hash, self) }
+
+    CSV.read(file_name, col_sep: "|", headers: COLUMNS).
+      map{|movie| movie.to_hash }
+  end
+
+  def self.parse_json(file_name)
+    raise "File \"#{file_name}\" not found" unless File.exist? file_name
+
+    JSON.parse(File.open(file_name, "r").read).
+      map {|movie_hash| movie_hash.symbolize_keys }
   end
   
 end
@@ -133,5 +150,12 @@ class MyMoviesList < MoviesList
 
   def genre_list
     @genre ||= @movies.map {|movie| movie.genre }.flatten.uniq!
+  end
+end
+
+
+class Hash
+  def symbolize_keys
+    map{|k,v| [k.to_sym, v]}.to_h
   end
 end

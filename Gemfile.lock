@@ -1,0 +1,18 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    highline (1.7.8)
+    mini_portile2 (2.0.0)
+    nokogiri (1.6.7.2)
+      mini_portile2 (~> 2.0.0.rc2)
+    options (2.3.2)
+    progress_bar (1.0.5)
+      highline (~> 1.6)
+      options (~> 2.3.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  nokogiri
+  progress_bar

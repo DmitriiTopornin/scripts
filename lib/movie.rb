@@ -10,8 +10,12 @@ class Movie
     @title = movie[:title]
     @year = movie[:year]
     @country = movie[:country]
-    @date = Date.strptime(movie[:date],'%Y-%m') if movie[:date].include? '-'
-    @genre = movie[:genre].split(',')
+    if movie[:date].include? '-'
+      @date = Date.strptime(movie[:date],'%Y-%m')
+    else
+      @date = Date.strptime(movie[:date],'%Y')
+    end
+    @genre = movie[:genre]
     @duration = movie[:duration].split(' ').first.to_i
     @rating = movie[:rating]
     @director = movie[:director]
@@ -60,6 +64,7 @@ class Movie
   protected
 
   def to_h
+    # puts @owner.class
     {
      year: @year,
      director: @director,
