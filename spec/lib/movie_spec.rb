@@ -69,29 +69,9 @@ describe Movie do
  
   context 'Movie object method' do
     context '#description' do
+      subject{Movie.category(movie, movies)}
       it 'should return string' do
-        expect{subject(Movie.category(movie, movies).description).to eq("классический фильм, режиссер  %{director}, кол-во фильмов: %{director_movies_count}")}
-      end
-    end
-
-    context '#to_h' do
-      it 'should returb hash' do
-        expect{subject(Movie.category(movie, movies)).to_h
-          .to eq({year: "1967", director: "Mike Nichols", director_movies_count: 0, actors: "Dustin Hoffman, Anne Bancroft, Katharine Ross"})}
-      end
-    end
-
-    context '#method_missing' do
-      it 'should return true' do
-        expect{subject(Movie.category(movie, movies)).method_missing(:comedy).to be true}
-      end
-
-      it 'should raise error' do
-        expect{subject(Movie.category(movie, movies)).method_missing(:asd).to raise_error}
-      end
-
-      it 'should raise ArgumentError' do
-        expect{subject(Movie.category(movie, movies)).method_missing.to raise_error(ArgumentError)}
+        expect(subject.description).to eq("классический фильм, режиссер  Mike Nichols, кол-во фильмов: 1")
       end
     end
   end
