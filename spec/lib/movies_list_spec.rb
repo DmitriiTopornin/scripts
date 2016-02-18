@@ -99,5 +99,23 @@ describe 'movies_list' do
       subject{MyMoviesList.new(movies_array).director_movies(director_test).map(&:director)}
       it {should include(director_test)}
     end
+
+    context '#sorted_by' do
+      before(:each) {subject.add_sort_algo(:sort_alg) {|movie| [movie.genre, movie.year]}}
+      it 'should return movies, sorted by genre and date' do
+        expect(subject.sorted_by(:sort_alg).map{|movie| [movie.genre, movie.year]}).to eq([[["Comedy", "Drama"], "1960"], [["Comedy", "Drama", "Romance"], "1967"], [["Crime", "Drama"], "2002"]])
+      end
+    end
+
+    context '#filter' do
+      before(:each) do 
+        subject.add_filter(:genres){|movie, *genres| genres.include?(movie.genre)}
+        subject.add_filter(:years){|movie, from, to| (from..to).include?(movie.year.to_i)}
+      end
+      let(:test_genre){'Comedy'}
+      it 'should return movies, sorted by genre and date' do
+        expect(subject.filter(genres: [test_genre], years: [1890, 2010])).to eq(2)
+      end
+    end
   end
 end

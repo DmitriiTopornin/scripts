@@ -112,6 +112,11 @@ class MoviesList
   end
 
   def filter(filters)
+    puts '_______________'
+    p @movies
+    puts '_______________'
+    p @filter
+    puts '_______________'
     filters.reduce(@movies) {|movies, (filter_name, val)| movies.select{|movie| @filter[filter_name].call(movie, *val)}}
   end
 
