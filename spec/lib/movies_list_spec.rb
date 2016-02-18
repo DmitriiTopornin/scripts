@@ -109,12 +109,35 @@ describe 'movies_list' do
 
     context '#filter' do
       before(:each) do 
-        subject.add_filter(:genres){|movie, *genres| genres.include?(movie.genre)}
+        subject.add_filter(:genres){|movie, *genres| genres&movie.genre == genres}
         subject.add_filter(:years){|movie, from, to| (from..to).include?(movie.year.to_i)}
       end
-      let(:test_genre){'Comedy'}
+      let(:test_genre){['Comedy','Drama']}
       it 'should return movies, sorted by genre and date' do
-        expect(subject.filter(genres: [test_genre], years: [1890, 2010])).to eq(2)
+        expect(subject.filter(genres: test_genre, years: [1890, 2010]).map(&:title)).to eq(["The Graduate (1967)", "Сладкая жизнь (1960)"])
+      end
+    end
+  end
+
+  describe MyMoviesList do
+
+    subject{MyMoviesList.new(movies_array)} 
+
+    context '#random_not_watched' do
+      before(:each) do 
+        subject.rate("The Graduate (1967)", 2.2)
+      end
+      it 'should return movies without rating' do
+        expect(subject.random_not_watched.map(&:title).sort).to eq(["Город Бога (2002)","Сладкая жизнь (1960)"])
+      end
+    end
+
+    context '#random_watched' do
+      before(:each) do 
+        subject.rate("The Graduate (1967)", 2.2)
+      end
+      it 'should return rated movies' do
+        expect(subject.random_watched.map(&:title)).to eq(["The Graduate (1967)"])
       end
     end
   end
