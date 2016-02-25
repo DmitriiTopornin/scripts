@@ -128,7 +128,7 @@ describe 'movies_list' do
         subject.rate("The Graduate (1967)", 2.2)
       end
       it 'should return movies without rating' do
-        expect(subject.random_not_watched.map(&:title).sort).to eq(["Город Бога (2002)","Сладкая жизнь (1960)"])
+        expect(subject.random_not_watched.map(&:title)).to contain_exactly("Город Бога (2002)","Сладкая жизнь (1960)")
       end
     end
 
