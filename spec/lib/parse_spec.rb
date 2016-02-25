@@ -11,7 +11,7 @@ describe ImdbParser do
 	end
 
 	context '#get_list' do
-		before(:each) {ImdbParser.parse_top('test')}
+		# before(:each) {ImdbParser.parse_top('test')}
 		it 'should return list movie' do
 			expect(ImdbParser.get_list.count).to eq(250)
 		end

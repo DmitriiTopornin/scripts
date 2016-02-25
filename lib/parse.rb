@@ -3,10 +3,11 @@ require 'progress_bar'
 
 class ImdbParser
 
+  @movies = []
   TOP_URL = "http://www.imdb.com/chart/top"
 
   def self.parse_top(file_name)
-    @movies = []
+    # @movies = []
     get_list
     create_json(file_name)
   end
