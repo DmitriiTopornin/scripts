@@ -7,7 +7,6 @@ class ImdbParser
   TOP_URL = "http://www.imdb.com/chart/top"
 
   def self.parse_top(file_name)
-    # @movies = []
     get_list
     create_json(file_name)
   end
