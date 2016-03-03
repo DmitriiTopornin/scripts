@@ -23,23 +23,26 @@ describe ImdbParser do
   end
 
 	context '#get_movie' do
+    subject{ImdbParser.new}
 		let(:url){'http://www.imdb.com/title/'}
 		it 'should return movie' do
-			expect(ImdbParser.get_movie(url)).to include(actors: "Tim Robbins, Morgan Freeman, Bob Gunton")
+			expect(subject.send(:get_movie, url)).to include(actors: "Tim Robbins, Morgan Freeman, Bob Gunton")
 		end
 	end
 
 	context '#get_list' do
+    subject{ImdbParser.new}
 		it 'should return list movie' do
-			expect(ImdbParser).to receive(:get_movie).exactly(250).times
-			list = ImdbParser.get_list
+			expect(subject).to receive(:get_movie).exactly(250).times
+			list = subject.send(:get_list)
 		end
 	end
 
 	context '#create_json' do
+    subject{ImdbParser.new}
     it 'should write json to file' do
-    	ImdbParser.get_list
-    	ImdbParser.create_json('test')
+    	subject.send(:get_list)
+    	subject.send(:create_json, 'test')
       expect(JSON::Validator.validate(schema, File.read('test.json'))).to eq(true)
     end
   end
