@@ -7,6 +7,8 @@ GEM
     diff-lcs (1.2.5)
     hashdiff (0.3.0)
     highline (1.7.8)
+    json-schema (2.5.0)
+      addressable (~> 2.3)
     mini_portile2 (2.0.0)
     nokogiri (1.6.7.2)
       mini_portile2 (~> 2.0.0.rc2)
@@ -37,6 +39,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  json-schema
   nokogiri
   progress_bar
   rspec
