@@ -5,7 +5,7 @@ source "https://rubygems.org"
 gem "nokogiri"
 gem "progress_bar"
 gem "webmock"
-# gem "eventmachine"
+gem "themoviedb-api"
 # gem "em-http-request"
 
 group :test do
