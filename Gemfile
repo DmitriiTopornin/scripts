@@ -11,4 +11,5 @@ gem "themoviedb-api"
 group :test do
   gem 'rspec'
   gem "json-schema"
+  gem 'rspec-its'
 end
