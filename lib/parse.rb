@@ -5,21 +5,24 @@ class ImdbParser
 
   TOP_URL = "http://www.imdb.com/chart/top"
 
-  def self.parse_top(file_name)
+  def initialize
     @movies = []
+  end
+
+  def parse_top(file_name)
     get_list
     create_json(file_name)
   end
 
   private
 
-  def self.create_json(file_name)
+  def create_json(file_name)
     File.open("#{file_name}.json", "w+") do |file|
       file.write(@movies.to_json)
     end
   end
 
-  def self.get_movie(movie_url)
+  def get_movie(movie_url)
     doc = Nokogiri::HTML(open(movie_url))
     mov = {}
     mov[:url] = movie_url
@@ -40,7 +43,7 @@ class ImdbParser
     mov
   end
 
-  def self.get_list
+  def get_list
     doc = Nokogiri::HTML(open(TOP_URL))
     movies_url_list = doc.css("table tbody tr td.titleColumn a").map{|movie| TOP_URL[0..18]+movie["href"]}
     bar = ProgressBar.new(movies_url_list.count)
