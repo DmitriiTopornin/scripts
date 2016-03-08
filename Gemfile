@@ -6,6 +6,7 @@ gem "nokogiri"
 gem "progress_bar"
 gem "webmock"
 gem "themoviedb-api"
+gem "vcr"
 # gem "em-http-request"
 
 group :test do

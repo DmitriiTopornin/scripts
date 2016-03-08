@@ -48,6 +48,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.2)
+    vcr (3.0.1)
     webmock (1.24.1)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
@@ -63,4 +64,5 @@ DEPENDENCIES
   rspec
   rspec-its
   themoviedb-api
+  vcr
   webmock

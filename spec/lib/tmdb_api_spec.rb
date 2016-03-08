@@ -1,9 +1,16 @@
-describe 'tmdb api' do
-  let(:tmdb_api) {TmdbApi.new}
+require 'vcr'
+require "webmock/rspec"
+require 'rspec/its'
+require 'tmdb_api.rb'
+
+WebMock.allow_net_connect!
+
+RSpec.describe 'tmdb api', vcr: true do
+  let(:tmdb_api) {TmdbApi.new.fetcher}
 
 	describe 'TmdbApi all' do
 
-		subject {tmdb_api.fetch}
+		subject {tmdb_api}
 
 	  context 'should be an array' do
 		  it{should be_an Array}
@@ -18,7 +25,7 @@ describe 'tmdb api' do
 	  end
 
 	  context 'one element' do
-	  	subject {tmdb_api.fetch.first}
+	  	subject {tmdb_api.first}
       it{should have_key([:url,:rating,:title,:year,:duration,:genre,:country,:date,:director,:actors])}
       it 'should have genres' do
       	expect(subject[:genre]).to all be_a String
