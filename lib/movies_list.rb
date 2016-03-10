@@ -134,28 +134,5 @@ protected
 end
 
 
-class MyMoviesList < MoviesList
-
-  include Rating::List
-
-  def random_not_watched
-    @movies.reject(&:watched?)
-      .sort_by {|movie| rand*movie.rating.to_f*movie.class.get_weight.to_f }.last(5)
-  end
-
-  def random_watched
-    @movies.select(&:watched?)
-      .sort_by {|movie| rand*movie.rating.to_f*movie.class.get_weight.to_f }.last(5)
-  end
-
-  def genre_list
-    @genre ||= @movies.map {|movie| movie.genre }.flatten.uniq!
-  end
-end
-
-
-class Hash
-  def symbolize_keys
-    map{|k,v| [k.to_sym, v]}.to_h
-  end
-end
+require_relative 'movies_list/my_movies_list'
+require_relative 'movies_list/hash'
